@@ -1,3 +1,9 @@
+// TODO:
+// - need to set teams[teamIndex]["AvgHeight"] 
+
+
+
+
 //
 //  main.swift
 //  SoccerCoordinator for Mac
@@ -11,32 +17,37 @@
 /*
  Main logic:
  
- Fetch Player Data
- Fetch Team Data
+ Load Player Data
+ Load Team Data
  Assign Players To Teams
- report Report Team Balance
+ Report Team Balance
  Print Team Rosters
- Send Player Selection Notices
+ Create Player Selection Notices
  
 */
 
-// array of dictionaries of meta-data for each player.
-var playerArray: [Dictionary<String,String>] = []
+/* data collection requirements:
+  Array of Dictionaries for Entire League
+  Array of Dictionaries for each of three teams
+  Dictionary for each player
+*/
 
-// array of teams
-var teamArray: [String] = []  // teamNames
+// array of dictionaries containing every player
+var leagueMembers: [Dictionary<String,String>] = []
+ 
+// var players: [String: String] = [:]
+//    "PlayerName"
+//    "PlayerHeight"
+//    "IsExperienced"
+//    "Guardians"
+//    "Team"
 
-var firstPractice: [String:String] = ["Dragons":"March 17, 1:00 PM", "Sharks":"March 17, 3:00 PM",
-"Raptors":"March 18, 1:00 PM"]
-
-// dictionary to hold player->team mapping
-var playerAssignments = [String: String]()  // playerName, teamName
-
-// aggregate values for each team
-var teamHeightSums = [String: Int]()
-var teamPlayersCount = [String: Int]()
-var teamHeightAvg = [String: Float]()
-var teamsByHeight = [String]()
+var teams: [Dictionary<String,String>] = []
+//    "TeamName"
+//    "NumPlayers"
+//    "SumOfHeights"
+//    "AvgHeight"
+//    "FirstPractice"
 
 /*
    would like to have used arrays of objects (or at least structs) for players and teams.
@@ -49,12 +60,13 @@ func AddPlayer(playerName: String, playerHeight: String, isExperienced: String, 
         "PlayerName" : playerName,
         "PlayerHeight" : playerHeight,
         "IsExperienced" : isExperienced,
-        "Guardians" : guardians
+        "Guardians" : guardians,
+        "Team" : "unassigned"
     ]
-    playerArray.append(player)
+    leagueMembers.append(player)
 }
 
-func FetchPlayerData() -> [Dictionary<String,String>] {  /* I think this output is correct */
+func LoadPlayerData() {
     
     AddPlayer(playerName: "Joe Smith",	playerHeight: "42", isExperienced: "YES",
               guardians: "Jim and Jan Smith")
@@ -106,14 +118,24 @@ func FetchPlayerData() -> [Dictionary<String,String>] {  /* I think this output 
               guardians: "Wynonna Brown")
     
     AddPlayer(playerName: "Herschel Krustofski", playerHeight: "45",isExperienced: "YES", guardians: "Hyman and Rachel Krustofski")
-    return playerArray
+    return
 }
 
-func FetchTeamData() -> [String] {
-    teamArray.append("Dragons")
-    teamArray.append("Sharks")
-    teamArray.append("Raptors")
-    return teamArray
+func AddTeam(teamName: String, firstPracticeDate: String) {
+    let aTeam = [
+        "TeamName" : teamName,
+        "NumPlayers" : "0",
+        "SumOfHeights" : "0",
+        "AvgHeight" : "0.0",
+        "FirstPractice" : firstPracticeDate
+    ]
+    teams.append(aTeam)
+}
+
+func LoadTeamData() {
+    AddTeam(teamName : "Sharks", firstPracticeDate: "March 17, 3:00 PM")
+    AddTeam(teamName : "Raptors", firstPracticeDate: "March 18, 1:00 PM" )
+    AddTeam(teamName : "Dragons", firstPracticeDate: "March 17, 1:00 PM")
 }
 
 func SortPlayersForBalance() {
@@ -121,7 +143,7 @@ func SortPlayersForBalance() {
      the following used guidance from http://stackoverflow.com/questions/24593867/sort-an-array-of-dictionaries-in-swift
      */
     
-    playerArray.sort {
+    leagueMembers.sort {
         item1, item2 in
         
         let ise1 = item1["IsExperienced"]
@@ -154,55 +176,70 @@ func SortPlayersForBalance() {
     }
 }
 
+func GetLeagueArrayIndexByName(name: String) -> Int {
+    var targetIndex: Int = 0
+    for playerDictionary in leagueMembers {
+        if playerDictionary["PlayerName"] == name {
+            return targetIndex
+        } else {
+            targetIndex = targetIndex + 1
+        }
+    }
+    return -1
+}
 
-/* function to return next team name by avg height, ascending for each round */
+func GetTeamArrayIndexByName(name: String) -> Int {
+    var targetIndex: Int = 0
+    for teamDictionary in teams {
+        if teamDictionary["TeamName"] == name {
+            return targetIndex
+        } else {
+            targetIndex = targetIndex + 1
+        }
+    }
+    return -1
+}
+
+
+// function to set the teamIndex the the next shortest team by avg height
+// for each round
+
 var teamIndex: Int = 0
 
-func nextTeam() -> String {
-    var teamToReturn: String
-    if teamIndex >= teamsByHeight.count {
-        // clear for re-calc
-        for tm in teamArray {
-            teamPlayersCount[tm] = 0
-            teamHeightSums[tm] = 0
-        }
+func nextTeam() {
+    if teamIndex == teams.count - 1 {
 
-        // aggregate info about each team
-        for playerDict in playerArray {
-            let player = playerDict["PlayerName"]
-            let height = Int(playerDict["PlayerHeight"]!)
-            let team = playerAssignments[player!]
-            if (team != nil) {
-                teamPlayersCount[team!]! += 1
-                teamHeightSums[team!] = teamHeightSums[team!]! + height!
+        // (re-)calculate average height
+        var tmavg: Float = 0.0
+        for tm in teams {
+            tmavg = ( Float(tm["SumOfHeights"]!)! / Float(tm["NumPlayers"]!)! )
+            teams[GetTeamArrayIndexByName(name: tm["TeamName"]!)]["AvgHeight"] = String(tmavg)
+        }
+        
+        // sort teams by Average Height, descending
+        teams.sort {
+            item1, item2 in
+            let ta1:Float? =  Float(item1["AvgHeight"]!)
+            let ta2:Float? =  Float(item2["AvgHeight"]!)
+            if ta1! <= ta2! {
+                return true
+            } else {
+                return false
             }
         }
-        
-        var tmavg: Float = 0.0
-        for tm in teamArray {
-            tmavg = ( Float(teamHeightSums[tm]!) / Float(teamPlayersCount[tm]!) )
-            teamHeightAvg[tm] = tmavg
-        }
-        
-        // get
-        var newIndex: Int = 0
-        for et in teamHeightAvg.sorted(by: {$0.value < $1.value}) {
-            teamsByHeight[newIndex] = et.key
-            newIndex = newIndex + 1
-        }
+            
         teamIndex = 0
 
 /* used to confirm it was working
-        print("teams sorted by avg height ")
-        for x in 0...2 {
-            print("\(teamsByHeight[x]): \(teamHeightAvg[teamsByHeight[x]])")
+        print("distrib pass, teams sorted by avg height ")
+        for x in 0...teams.count-1 {
+            print("\(teams[x]["TeamName"]!): \(teams[x]["AvgHeight"]!)")
         }
 */
+    } else {
+        teamIndex = teamIndex + 1
     }
-    
-    teamToReturn = teamsByHeight[teamIndex]
-    teamIndex = teamIndex + 1
-    return teamToReturn
+    return
 }
 
 /*
@@ -210,61 +247,76 @@ func nextTeam() -> String {
     by avg ht desc, and assign players to teams in that order.
  */
 
-func AssignPlayersToTeams() -> [String: String] {
-    for tm in teamArray {
-        teamPlayersCount[tm] = 0
-        teamHeightSums[tm] = 0
-    }
+func AssignPlayersToTeams() {
     SortPlayersForBalance()  // sort players
     print("All players, sorted by experience, then height:")
-    for p in playerArray {
+    for p in leagueMembers {
         print("\(p["PlayerName"]!), \(p["IsExperienced"]!), \(p["PlayerHeight"]!)")
     }
     print("\n")
     
-    var teamsHeightOrder: [String:Any] = [:]
-    var teamMetadata: [String:Int] = [:]
-    
-    for t in teamArray {
-        teamMetadata["Count"] = 0
-        teamMetadata["Sum"] = 0
-        teamMetadata["Avg"] = 0
-
-        teamsHeightOrder[t] = teamMetadata
-    }
-
     // assign each player to a team
-    for player in playerArray {
+    for player in leagueMembers {
         let pnm = player["PlayerName"]
-        playerAssignments[pnm!] = nextTeam()
+        let pht: Int = Int(player["PlayerHeight"]!)!
+        let tm = teams[teamIndex]["TeamName"]
+        
+        leagueMembers[GetLeagueArrayIndexByName(name: pnm!)]["Team"] = tm
+
+        teams[teamIndex]["NumPlayers"] =
+            String(Int(teams[teamIndex]["NumPlayers"]!)! + 1)
+
+        teams[teamIndex]["SumOfHeights"] =
+            String(Int(teams[teamIndex]["SumOfHeights"]!)! + pht)
+        nextTeam()
      }
-    nextTeam()  // call one more time to get the last set of assigned players counted.
-    return playerAssignments
+    nextTeam()  // with new architectur, do I still need to call one more time to get the last set of assigned players counted.
+}
+
+func GetMinAvgHeight() -> Float {
+    var newmin: Float = 999.9
+    for t in teams {
+        if Float(t["AvgHeight"]!)! < newmin {
+            newmin = Float(t["AvgHeight"]!)!
+        }
+    }
+    return newmin
+}
+
+func GetMaxAvgHeight() -> Float {
+    var newmax: Float = 0.0
+    for t in teams {
+        if Float(t["AvgHeight"]!)! > newmax {
+            newmax = Float(t["AvgHeight"]!)!
+        }
+    }
+    return newmax
 }
 
 func AnalyzeTeamBalance() {
  
     // report team average height
-    var tmavg: Float = 0.0
     print("Team stats:")
-    for tm in teamArray {
-        tmavg = ( Float(teamHeightSums[tm]!) / Float(teamPlayersCount[tm]!) )
-        print("\(tm) height sum= \(teamHeightSums[tm]!), player count= \(teamPlayersCount[tm]!), and average= \(tmavg)")
+    for tm in teams {
+        print("\(tm["TeamName"]!) height sum= \(tm["SumOfHeights"]!), player count= \(tm["NumPlayers"]!), and average= \(tm["AvgHeight"]!)")
     }
     print("\n")
     
-    if (teamHeightAvg.values.max()! - teamHeightAvg.values.min()!) > 1.5 {
-        print("Teams are not balanced - height delta is \(teamHeightAvg.values.max()! - teamHeightAvg.values.min()!)")
+    let tmMax = GetMaxAvgHeight()
+    let tmMin = GetMinAvgHeight()
+    
+    if (tmMax - tmMin) > 1.5 {
+        print("Teams are not balanced", terminator:" ")
     } else {
-        print("Teams are well balanced - height delta is \(teamHeightAvg.values.max()! - teamHeightAvg.values.min()!)")
+        print("Teams are well balanced", terminator:" ")
     }
-    print("\n")
+    print(" - average height delta is \(tmMax - tmMin)! \n")
     
     return
 }
 
 func getGard(player: String) -> String {
-    for pdic in playerArray {
+    for pdic in leagueMembers {
         if pdic["PlayerName"] == player {
             return pdic["Guardians"]!
         }
@@ -274,10 +326,9 @@ func getGard(player: String) -> String {
 
 func PrintTeamRoster(TeamName: String) {
     print("\(TeamName) Roster list:\n")
-    for player in playerAssignments {
-        if player.value == TeamName {
-            print("Guardians: \(getGard(player: player.key))\tPlayer: \(player.key)")
-            
+    for player in leagueMembers {
+        if player["Team"] == TeamName {
+            print("Guardians: \(player["Guardians"]!)\tPlayer: \(player["PlayerName"]!)")
         }
     }
     print("\n")
@@ -291,28 +342,33 @@ func SendPlayerSelectionNotices() {
      XCode project.
 */
     
-    for player in playerArray {
+    for player in leagueMembers {
         print("---------------")
         print("Dear \(player["Guardians"]!),\n")
-        print("Congratulations on the selection of \(player["PlayerName"]!) by the \(  playerAssignments[player["PlayerName"]!]!) Team.")
-        print("Please make sure to put the team's first practice on \(firstPractice[playerAssignments[player["PlayerName"]!]!]!) on your calendar.\n")
-        print("For your reference, here is the complete list of players selected by the \(playerAssignments[player["PlayerName"]!]!):\n\n")
         
-        PrintTeamRoster(TeamName: playerAssignments[player["PlayerName"]!]!)
+        print("Congratulations on the selection of \(player["PlayerName"]!) by the \(player["Team"]!) Team.")
+        
+        print("Please make sure to put the team's first practice on \(teams[GetTeamArrayIndexByName(name: player["Team"]!)]["FirstPractice"]!) on your calendar.\n")
+            
+        print("For your reference, here is the complete list of players selected by the \(player["Team"]!):\n\n")
+        
+        PrintTeamRoster(TeamName: player["Team"]!)
     }
 }
 
-let thePlayers: [Dictionary<String,String>] = FetchPlayerData()
-let theTeams = FetchTeamData()
-
- for t in theTeams {
-    teamsByHeight.append(t)
- }
-let theAssignments = AssignPlayersToTeams()
+LoadPlayerData()
+LoadTeamData()
+AssignPlayersToTeams()
 
 print("Player assignments to Teams:")
-for ta in theAssignments {
-    print("key=\(ta.key), value=\(ta.value)")
+for tms in teams.sorted(by: { $0["TeamName"]! < $1["TeamName"]! })
+{
+    for player in leagueMembers.sorted(by: {$0["PlayerName"]! < $1["PlayerName"]!}) {
+        if player["Team"] == tms["TeamName"] {
+            print("\(tms["TeamName"]!)\t\(player["PlayerName"]!)")
+        }
+    }
+    print(" ")
 }
 print("\n")
 
