@@ -1,18 +1,10 @@
-// TODO:
-// - need to set teams[teamIndex]["AvgHeight"] 
-
-
-
-
-//
 //  main.swift
-//  SoccerCoordinator for Mac
+// Soccer Coordinator Exercise
 //
 //  Created by Roger Rohweder on 9/26/16.
 //  Copyright © 2016 Roger Rohweder. All rights reserved.
 //
 
-// Soccer Coordinator Exercise
 
 /*
  Main logic:
@@ -24,17 +16,17 @@
  Print Team Rosters
  Create Player Selection Notices
  
-*/
+ */
 
 /* data collection requirements:
-  Array of Dictionaries for Entire League
-  Array of Dictionaries for each of three teams
-  Dictionary for each player
-*/
+ Array of Dictionaries for Entire League
+ Array of Dictionaries for each of three teams
+ Dictionary for each player
+ */
 
 // array of dictionaries containing every player
 var leagueMembers: [Dictionary<String,String>] = []
- 
+
 // var players: [String: String] = [:]
 //    "PlayerName"
 //    "PlayerHeight"
@@ -50,10 +42,10 @@ var teams: [Dictionary<String,String>] = []
 //    "FirstPractice"
 
 /*
-   would like to have used arrays of objects (or at least structs) for players and teams.
-*/
+ would like to have used arrays of objects (or at least structs) for players and teams.
+ */
 
-func AddPlayer(playerName: String, playerHeight: String, isExperienced: String, guardians: String) {
+func addPlayer(playerName: String, playerHeight: String, isExperienced: String, guardians: String) {
     
     // would like to use a struct here, so I could mix types
     let player = [
@@ -66,62 +58,62 @@ func AddPlayer(playerName: String, playerHeight: String, isExperienced: String, 
     leagueMembers.append(player)
 }
 
-func LoadPlayerData() {
+func loadPlayerData() {
     
-    AddPlayer(playerName: "Joe Smith",	playerHeight: "42", isExperienced: "YES",
+    addPlayer(playerName: "Joe Smith",	playerHeight: "42", isExperienced: "YES",
               guardians: "Jim and Jan Smith")
     
-    AddPlayer(playerName: "Jill Tanner", playerHeight: "36", isExperienced: "YES",
+    addPlayer(playerName: "Jill Tanner", playerHeight: "36", isExperienced: "YES",
               guardians: "Clara Tanner")
     
-    AddPlayer(playerName: "Bill Bon", playerHeight: "43", isExperienced: "YES",
+    addPlayer(playerName: "Bill Bon", playerHeight: "43", isExperienced: "YES",
               guardians: "Sara and Jenny Bon")
     
-    AddPlayer(playerName: "Eva Gordon", playerHeight: "45", isExperienced: "NO",
+    addPlayer(playerName: "Eva Gordon", playerHeight: "45", isExperienced: "NO",
               guardians: "Wendy and Mike Gordon")
     
-    AddPlayer(playerName: "Matt Gill", playerHeight: "40", isExperienced: "NO",
+    addPlayer(playerName: "Matt Gill", playerHeight: "40", isExperienced: "NO",
               guardians: "Charles and Sylvia Gill")
     
-    AddPlayer(playerName: "Kimmy Stein", playerHeight: "41",isExperienced: "NO",
+    addPlayer(playerName: "Kimmy Stein", playerHeight: "41",isExperienced: "NO",
               guardians: "Bill and Hillary Stein")
     
-    AddPlayer(playerName: "Sammy Adams", playerHeight: "45", isExperienced: "NO",
+    addPlayer(playerName: "Sammy Adams", playerHeight: "45", isExperienced: "NO",
               guardians: "Jeff Adams")
     
-    AddPlayer(playerName: "Karl Saygan", playerHeight: "42", isExperienced: "YES",
+    addPlayer(playerName: "Karl Saygan", playerHeight: "42", isExperienced: "YES",
               guardians: "Heather Bledsoe")
     
-    AddPlayer(playerName: "Suzane Greenberg", playerHeight: "44", isExperienced: "YES", guardians: "Henrietta Dumas")
+    addPlayer(playerName: "Suzane Greenberg", playerHeight: "44", isExperienced: "YES", guardians: "Henrietta Dumas")
     
-    AddPlayer(playerName: "Sal Dali", playerHeight: "41", isExperienced: "NO",
+    addPlayer(playerName: "Sal Dali", playerHeight: "41", isExperienced: "NO",
               guardians: "Gala Dali")
     
-    AddPlayer(playerName: "Joe Kavalier", playerHeight: "39", isExperienced: "NO",
+    addPlayer(playerName: "Joe Kavalier", playerHeight: "39", isExperienced: "NO",
               guardians: "Sam and Elaine Kavalier")
     
-    AddPlayer(playerName: "Ben Finkelstein", playerHeight: "44", isExperienced: "NO", guardians: "Aaron and Jill Finkelstein")
+    addPlayer(playerName: "Ben Finkelstein", playerHeight: "44", isExperienced: "NO", guardians: "Aaron and Jill Finkelstein")
     
-    AddPlayer(playerName: "Diego Soto", playerHeight:	"41", isExperienced: "YES",
+    addPlayer(playerName: "Diego Soto", playerHeight:	"41", isExperienced: "YES",
               guardians: "Robin and Sarika Soto")
     
-    AddPlayer(playerName: "Chloe Alaska", playerHeight: "47", isExperienced: "NO",
+    addPlayer(playerName: "Chloe Alaska", playerHeight: "47", isExperienced: "NO",
               guardians: "David and Jamie Alaska")
     
-    AddPlayer(playerName: "Arnold Willis", playerHeight: "43", isExperienced: "NO",
+    addPlayer(playerName: "Arnold Willis", playerHeight: "43", isExperienced: "NO",
               guardians: "Claire Willis")
     
-    AddPlayer(playerName: "Phillip Helm", playerHeight: "44", isExperienced: "YES",
+    addPlayer(playerName: "Phillip Helm", playerHeight: "44", isExperienced: "YES",
               guardians: "Thomas Helm and Eva Jones")
     
-    AddPlayer(playerName: "Les Clay", playerHeight: "42", isExperienced: "YES",
+    addPlayer(playerName: "Les Clay", playerHeight: "42", isExperienced: "YES",
               guardians: "Wynonna Brown")
     
-    AddPlayer(playerName: "Herschel Krustofski", playerHeight: "45",isExperienced: "YES", guardians: "Hyman and Rachel Krustofski")
+    addPlayer(playerName: "Herschel Krustofski", playerHeight: "45",isExperienced: "YES", guardians: "Hyman and Rachel Krustofski")
     return
 }
 
-func AddTeam(teamName: String, firstPracticeDate: String) {
+func addTeam(teamName: String, firstPracticeDate: String) {
     let aTeam = [
         "TeamName" : teamName,
         "NumPlayers" : "0",
@@ -132,13 +124,13 @@ func AddTeam(teamName: String, firstPracticeDate: String) {
     teams.append(aTeam)
 }
 
-func LoadTeamData() {
-    AddTeam(teamName : "Sharks", firstPracticeDate: "March 17, 3:00 PM")
-    AddTeam(teamName : "Raptors", firstPracticeDate: "March 18, 1:00 PM" )
-    AddTeam(teamName : "Dragons", firstPracticeDate: "March 17, 1:00 PM")
+func loadTeamData() {
+    addTeam(teamName : "Sharks", firstPracticeDate: "March 17, 3:00 PM")
+    addTeam(teamName : "Raptors", firstPracticeDate: "March 18, 1:00 PM" )
+    addTeam(teamName : "Dragons", firstPracticeDate: "March 17, 1:00 PM")
 }
 
-func SortPlayersForBalance() {
+func sortPlayersForBalance() {
     /*
      the following used guidance from http://stackoverflow.com/questions/24593867/sort-an-array-of-dictionaries-in-swift
      */
@@ -150,7 +142,7 @@ func SortPlayersForBalance() {
         let ise2 = item2["IsExperienced"]
         let ph1:Int? =  Int(item1["PlayerHeight"]!)
         let ph2:Int? =  Int(item2["PlayerHeight"]!)
- 
+        
         if ise1 == "YES"  {
             if ise2 == "YES" {
                 if ph1! >= ph2! {
@@ -176,7 +168,7 @@ func SortPlayersForBalance() {
     }
 }
 
-func GetLeagueArrayIndexByName(name: String) -> Int {
+func getLeagueArrayIndexByName(name: String) -> Int {
     var targetIndex: Int = 0
     for playerDictionary in leagueMembers {
         if playerDictionary["PlayerName"] == name {
@@ -188,7 +180,7 @@ func GetLeagueArrayIndexByName(name: String) -> Int {
     return -1
 }
 
-func GetTeamArrayIndexByName(name: String) -> Int {
+func getTeamArrayIndexByName(name: String) -> Int {
     var targetIndex: Int = 0
     for teamDictionary in teams {
         if teamDictionary["TeamName"] == name {
@@ -208,12 +200,12 @@ var teamIndex: Int = 0
 
 func nextTeam() {
     if teamIndex == teams.count - 1 {
-
+        
         // (re-)calculate average height
         var tmavg: Float = 0.0
         for tm in teams {
             tmavg = ( Float(tm["SumOfHeights"]!)! / Float(tm["NumPlayers"]!)! )
-            teams[GetTeamArrayIndexByName(name: tm["TeamName"]!)]["AvgHeight"] = String(tmavg)
+            teams[getTeamArrayIndexByName(name: tm["TeamName"]!)]["AvgHeight"] = String(tmavg)
         }
         
         // sort teams by Average Height, descending
@@ -227,15 +219,15 @@ func nextTeam() {
                 return false
             }
         }
-            
+        
         teamIndex = 0
-
-/* used to confirm it was working
-        print("distrib pass, teams sorted by avg height ")
-        for x in 0...teams.count-1 {
-            print("\(teams[x]["TeamName"]!): \(teams[x]["AvgHeight"]!)")
-        }
-*/
+        
+        /* used to confirm it was working
+         print("distrib pass, teams sorted by avg height ")
+         for x in 0...teams.count-1 {
+         print("\(teams[x]["TeamName"]!): \(teams[x]["AvgHeight"]!)")
+         }
+         */
     } else {
         teamIndex = teamIndex + 1
     }
@@ -243,12 +235,12 @@ func nextTeam() {
 }
 
 /*
-    calculate the avg height for each team after each round of assignment, then sort teams 
-    by avg ht desc, and assign players to teams in that order.
+ calculate the avg height for each team after each round of assignment, then sort teams
+ by avg ht desc, and assign players to teams in that order.
  */
 
-func AssignPlayersToTeams() {
-    SortPlayersForBalance()  // sort players
+func assignPlayersToTeams() {
+    sortPlayersForBalance()  // sort players
     print("All players, sorted by experience, then height:")
     for p in leagueMembers {
         print("\(p["PlayerName"]!), \(p["IsExperienced"]!), \(p["PlayerHeight"]!)")
@@ -261,19 +253,19 @@ func AssignPlayersToTeams() {
         let pht: Int = Int(player["PlayerHeight"]!)!
         let tm = teams[teamIndex]["TeamName"]
         
-        leagueMembers[GetLeagueArrayIndexByName(name: pnm!)]["Team"] = tm
-
+        leagueMembers[getLeagueArrayIndexByName(name: pnm!)]["Team"] = tm
+        
         teams[teamIndex]["NumPlayers"] =
             String(Int(teams[teamIndex]["NumPlayers"]!)! + 1)
-
+        
         teams[teamIndex]["SumOfHeights"] =
             String(Int(teams[teamIndex]["SumOfHeights"]!)! + pht)
         nextTeam()
-     }
+    }
     nextTeam()  // with new architectur, do I still need to call one more time to get the last set of assigned players counted.
 }
 
-func GetMinAvgHeight() -> Float {
+func getMinAvgHeight() -> Float {
     var newmin: Float = 999.9
     for t in teams {
         if Float(t["AvgHeight"]!)! < newmin {
@@ -283,7 +275,7 @@ func GetMinAvgHeight() -> Float {
     return newmin
 }
 
-func GetMaxAvgHeight() -> Float {
+func getMaxAvgHeight() -> Float {
     var newmax: Float = 0.0
     for t in teams {
         if Float(t["AvgHeight"]!)! > newmax {
@@ -293,8 +285,8 @@ func GetMaxAvgHeight() -> Float {
     return newmax
 }
 
-func AnalyzeTeamBalance() {
- 
+func analyzeTeamBalance() {
+    
     // report team average height
     print("Team stats:")
     for tm in teams {
@@ -302,8 +294,8 @@ func AnalyzeTeamBalance() {
     }
     print("\n")
     
-    let tmMax = GetMaxAvgHeight()
-    let tmMin = GetMinAvgHeight()
+    let tmMax = getMaxAvgHeight()
+    let tmMin = getMinAvgHeight()
     
     if (tmMax - tmMin) > 1.5 {
         print("Teams are not balanced", terminator:" ")
@@ -315,16 +307,7 @@ func AnalyzeTeamBalance() {
     return
 }
 
-func getGard(player: String) -> String {
-    for pdic in leagueMembers {
-        if pdic["PlayerName"] == player {
-            return pdic["Guardians"]!
-        }
-    }
-    return ""
-}
-
-func PrintTeamRoster(TeamName: String) {
+func printTeamRoster(TeamName: String) {
     print("\(TeamName) Roster list:\n")
     for player in leagueMembers {
         if player["Team"] == TeamName {
@@ -334,13 +317,13 @@ func PrintTeamRoster(TeamName: String) {
     print("\n")
 }
 
-func SendPlayerSelectionNotices() {
-/* specification:
-     Provide logic that prints a personalized letter to the guardians specifying: 
-     the player’s name, guardians' names, team name, and date/time of their first team practice. 
-     The letters should be visible when code is placed in a XCode Playground or run in an 
+func sendPlayerSelectionNotices() {
+    /* specification:
+     Provide logic that prints a personalized letter to the guardians specifying:
+     the player’s name, guardians' names, team name, and date/time of their first team practice.
+     The letters should be visible when code is placed in a XCode Playground or run in an
      XCode project.
-*/
+     */
     
     for player in leagueMembers {
         print("---------------")
@@ -348,17 +331,18 @@ func SendPlayerSelectionNotices() {
         
         print("Congratulations on the selection of \(player["PlayerName"]!) by the \(player["Team"]!) Team.")
         
-        print("Please make sure to put the team's first practice on \(teams[GetTeamArrayIndexByName(name: player["Team"]!)]["FirstPractice"]!) on your calendar.\n")
-            
+        print("Please make sure to put the team's first practice on \(teams[getTeamArrayIndexByName(name: player["Team"]!)]["FirstPractice"]!) on your calendar.\n")
+        
         print("For your reference, here is the complete list of players selected by the \(player["Team"]!):\n\n")
         
-        PrintTeamRoster(TeamName: player["Team"]!)
+        printTeamRoster(TeamName: player["Team"]!)
     }
 }
 
-LoadPlayerData()
-LoadTeamData()
-AssignPlayersToTeams()
+loadPlayerData()
+loadTeamData()
+assignPlayersToTeams()
+analyzeTeamBalance()
 
 print("Player assignments to Teams:")
 for tms in teams.sorted(by: { $0["TeamName"]! < $1["TeamName"]! })
@@ -372,7 +356,6 @@ for tms in teams.sorted(by: { $0["TeamName"]! < $1["TeamName"]! })
 }
 print("\n")
 
-AnalyzeTeamBalance()
-// PrintTeamRosters()
-SendPlayerSelectionNotices()
+
+sendPlayerSelectionNotices()
 
